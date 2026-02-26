@@ -132,13 +132,13 @@ export default function ExpensesPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card/50">
-        <div className="max-w-[1400px] mx-auto px-6 py-8">
+        <div className="max-w-[1400px] mx-auto px-6 py-12">
           <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <h1 className="font-serif text-3xl font-bold mb-2">
+              <h1 className="font-serif text-3xl font-bold mb-3">
                 Budget & Expenses
               </h1>
               <p className="text-sm text-muted max-w-2xl">
@@ -166,7 +166,7 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-8">
+      <div className="max-w-[1400px] mx-auto px-6 py-10">
         {/* Scenario Toggle + Summary */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
           {/* Scenario Selector */}

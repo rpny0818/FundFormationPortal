@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { resources } from "@/data/defaults";
 import {
   Search,
@@ -10,6 +10,8 @@ import {
   Globe,
   BookOpen,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const allTags = Array.from(new Set(resources.flatMap((r) => r.tags))).sort();
@@ -33,11 +35,23 @@ const fadeUp = {
 export default function ResourcesPage() {
   const [search, setSearch] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [slideIndex, setSlideIndex] = useState(0);
 
   const toggleTag = (tag: string) => {
     setActiveTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
+  };
+
+  const openSlideshow = (resourceId: string) => {
+    if (expandedId === resourceId) {
+      setExpandedId(null);
+      setSlideIndex(0);
+    } else {
+      setExpandedId(resourceId);
+      setSlideIndex(0);
+    }
   };
 
   const filtered = useMemo(() => {
@@ -58,23 +72,24 @@ export default function ResourcesPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card/50">
-        <div className="max-w-[1200px] mx-auto px-6 py-8">
+        <div className="max-w-[1200px] mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="font-serif text-3xl font-bold mb-2">
+            <h1 className="font-serif text-3xl font-bold mb-3">
               Resources Library
             </h1>
             <p className="text-sm text-muted max-w-2xl">
               Curated PDFs, model documents, regulatory portals, and industry
-              guidance for fund formation professionals.
+              guidance for fund formation professionals. Click any resource to
+              view key highlights.
             </p>
           </motion.div>
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-6 py-10">
         {/* Search + Filters */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -89,7 +104,7 @@ export default function ResourcesPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search resources by title, topic, or tag…"
+              placeholder="Search resources by title, topic, or tag\u2026"
               className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-card border border-border text-sm placeholder:text-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
             />
           </div>
@@ -126,7 +141,7 @@ export default function ResourcesPage() {
           initial="hidden"
           animate="show"
           variants={stagger}
-          className="space-y-3"
+          className="space-y-4"
         >
           <div className="text-xs text-muted mb-4">
             {filtered.length} resource{filtered.length !== 1 ? "s" : ""} found
@@ -134,9 +149,20 @@ export default function ResourcesPage() {
 
           {filtered.map((resource) => {
             const TypeIcon = typeIcons[resource.type] || FileText;
+            const isExpanded = expandedId === resource.id;
+            const slides = resource.slides || [];
+
             return (
               <motion.div key={resource.id} variants={fadeUp}>
-                <div className="group p-5 rounded-xl bg-card border border-border hover:border-border-hover hover:bg-card-hover transition-all duration-300">
+                {/* Resource Card */}
+                <div
+                  onClick={() => slides.length > 0 && openSlideshow(resource.id)}
+                  className={`group p-6 rounded-xl bg-card border transition-all duration-300 ${
+                    isExpanded
+                      ? "border-accent/40 bg-card-hover shadow-lg shadow-accent/5"
+                      : "border-border hover:border-border-hover hover:bg-card-hover"
+                  } ${slides.length > 0 ? "cursor-pointer" : ""}`}
+                >
                   <div className="flex items-start gap-4">
                     <div className="p-2.5 rounded-lg bg-background border border-border shrink-0">
                       <TypeIcon className="w-4 h-4 text-accent" />
@@ -157,6 +183,11 @@ export default function ResourcesPage() {
                         >
                           {resource.type}
                         </span>
+                        {slides.length > 0 && (
+                          <span className="text-[9px] text-muted ml-auto">
+                            {isExpanded ? "Click to collapse" : `${slides.length} key points`}
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-muted leading-relaxed mb-3">
                         {resource.summary}
@@ -176,6 +207,7 @@ export default function ResourcesPage() {
                           href={resource.url}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 text-accent text-[11px] font-medium hover:bg-accent/20 transition-colors shrink-0"
                         >
                           Open
@@ -185,6 +217,84 @@ export default function ResourcesPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Slideshow Panel */}
+                <AnimatePresence>
+                  {isExpanded && slides.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-2 rounded-xl bg-surface border border-border p-6">
+                        {/* Slide content */}
+                        <div className="relative min-h-[80px] flex items-center justify-center px-12">
+                          <AnimatePresence mode="wait">
+                            <motion.p
+                              key={slideIndex}
+                              initial={{ opacity: 0, x: 40 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -40 }}
+                              transition={{ duration: 0.25 }}
+                              className="text-sm text-foreground leading-relaxed text-center"
+                            >
+                              {slides[slideIndex]}
+                            </motion.p>
+                          </AnimatePresence>
+
+                          {/* Left arrow */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSlideIndex(Math.max(0, slideIndex - 1));
+                            }}
+                            disabled={slideIndex === 0}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-card border border-border text-muted hover:text-foreground hover:border-border-hover disabled:opacity-20 disabled:hover:text-muted transition-all"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+
+                          {/* Right arrow */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSlideIndex(
+                                Math.min(slides.length - 1, slideIndex + 1)
+                              );
+                            }}
+                            disabled={slideIndex === slides.length - 1}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-card border border-border text-muted hover:text-foreground hover:border-border-hover disabled:opacity-20 disabled:hover:text-muted transition-all"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Dot indicators */}
+                        <div className="flex items-center justify-center gap-2 mt-5">
+                          {slides.map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSlideIndex(i);
+                              }}
+                              className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                i === slideIndex
+                                  ? "bg-accent scale-125"
+                                  : "bg-border hover:bg-border-hover"
+                              }`}
+                            />
+                          ))}
+                          <span className="text-[10px] text-muted ml-2">
+                            {slideIndex + 1} / {slides.length}
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             );
           })}

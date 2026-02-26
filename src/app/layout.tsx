@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className="antialiased min-h-screen">
         <Navigation />
-        <main className="pt-14">{children}</main>
+        <main className="pt-16">{children}</main>
       </body>
     </html>
   );

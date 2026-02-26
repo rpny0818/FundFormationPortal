@@ -27,7 +27,7 @@ export default function Navigation() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto max-w-[1600px] flex items-center justify-between h-14 px-4 lg:px-8">
+      <div className="mx-auto max-w-[1600px] flex items-center justify-between h-16 px-4 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
             <span className="text-accent font-bold text-sm">FF</span>

@@ -82,7 +82,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 grid-pattern" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[600px] bg-accent/5 rounded-full blur-[120px]" />
 
-        <div className="relative max-w-[1200px] mx-auto px-6 pt-24 pb-20 lg:pt-32 lg:pb-28">
+        <div className="relative max-w-[1200px] mx-auto px-6 pt-32 pb-24 lg:pt-40 lg:pb-32">
           <motion.div
             initial="hidden"
             animate="show"
@@ -98,7 +98,7 @@ export default function LandingPage() {
 
             <motion.h1
               variants={fadeUp}
-              className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6"
+              className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-8"
             >
               Fund Formation
               <br />
@@ -114,7 +114,7 @@ export default function LandingPage() {
 
             <motion.p
               variants={fadeUp}
-              className="text-sm text-muted/70 max-w-xl mx-auto mb-10"
+              className="text-sm text-muted/70 max-w-xl mx-auto mb-12"
             >
               A one-stop platform for structuring funds, managing formation workflows,
               modeling economics, and coordinating LP onboarding — built for investment
@@ -162,7 +162,7 @@ export default function LandingPage() {
 
       {/* Capabilities bar */}
       <section className="border-y border-border bg-card/50">
-        <div className="max-w-[1200px] mx-auto px-6 py-5">
+        <div className="max-w-[1200px] mx-auto px-6 py-6">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -185,14 +185,14 @@ export default function LandingPage() {
       </section>
 
       {/* Feature Grid */}
-      <section className="max-w-[1200px] mx-auto px-6 py-20">
+      <section className="max-w-[1200px] mx-auto px-6 py-24">
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
           variants={stagger}
         >
-          <motion.div variants={fadeUp} className="text-center mb-14">
+          <motion.div variants={fadeUp} className="text-center mb-16">
             <h2 className="font-serif text-3xl font-bold mb-3">
               Everything You Need
             </h2>
@@ -202,12 +202,12 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feat) => (
               <motion.div key={feat.title} variants={fadeUp}>
                 <Link
                   href={feat.href}
-                  className="group block p-6 rounded-xl bg-card border border-border hover:border-border-hover hover:bg-card-hover transition-all duration-300 hover:shadow-lg hover:shadow-accent/5 h-full"
+                  className="group block p-7 rounded-xl bg-card border border-border hover:border-border-hover hover:bg-card-hover transition-all duration-300 hover:shadow-lg hover:shadow-accent/5 h-full"
                 >
                   <div className="flex items-start gap-4">
                     <div
@@ -233,7 +233,7 @@ export default function LandingPage() {
             <motion.div variants={fadeUp}>
               <Link
                 href="/case-study/distressed-real-estate"
-                className="group block p-6 rounded-xl bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20 hover:border-accent/40 transition-all duration-300 h-full"
+                className="group block p-7 rounded-xl bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20 hover:border-accent/40 transition-all duration-300 h-full"
               >
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-lg bg-accent/10 border border-accent/20">
@@ -257,7 +257,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8 px-6">
+      <footer className="border-t border-border py-10 px-6">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted text-center sm:text-left">
           <span>Fund Formation OS — Boutique Advisory Platform</span>
           <span>Informational only. Not legal or investment advice.</span>

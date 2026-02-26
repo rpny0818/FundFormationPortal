@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, memo } from "react";
+import { useEffect, useCallback, memo, useState } from "react";
 import {
   ReactFlow,
   Background,
@@ -25,6 +25,7 @@ import {
   CreditCard,
   GitFork,
   Ban,
+  Pencil,
 } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
@@ -33,6 +34,7 @@ import {
 
 interface StructureDiagramProps {
   config: FundConfig;
+  onNodeEdit?: (nodeId: string, label: string, subtitle: string) => void;
 }
 
 interface CustomNodeData {
@@ -88,11 +90,11 @@ const FundNode = memo(({ data }: { data: CustomNodeData }) => {
       className="group"
       style={{
         background: "#12131a",
-        border: "1px solid #1e2030",
+        border: "1px solid #262940",
         borderRadius: 10,
         padding: "14px 20px",
         minWidth: 170,
-        cursor: "default",
+        cursor: "pointer",
         transition: "border-color 0.2s, box-shadow 0.2s",
       }}
       onMouseEnter={(e) => {
@@ -102,7 +104,7 @@ const FundNode = memo(({ data }: { data: CustomNodeData }) => {
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement;
-        el.style.borderColor = "#1e2030";
+        el.style.borderColor = "#262940";
         el.style.boxShadow = "none";
       }}
     >
@@ -176,7 +178,7 @@ const FundNode = memo(({ data }: { data: CustomNodeData }) => {
           {/* @ts-expect-error dynamic icon component */}
           <Icon size={16} color={accent} />
         </div>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <div
             style={{
               color: "#e8e8ed",
@@ -207,6 +209,11 @@ const FundNode = memo(({ data }: { data: CustomNodeData }) => {
             </div>
           )}
         </div>
+        <Pencil
+          size={12}
+          color="#6b7094"
+          style={{ flexShrink: 0, opacity: 0.5 }}
+        />
       </div>
     </motion.div>
   );
@@ -482,27 +489,55 @@ function formatCurrency(value: number): string {
 /*  Main Component                                                            */
 /* -------------------------------------------------------------------------- */
 
-export default function StructureDiagram({ config }: StructureDiagramProps) {
+export default function StructureDiagram({ config, onNodeEdit }: StructureDiagramProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<DiagramNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+  const [editSubtitle, setEditSubtitle] = useState("");
 
   const regenerateLayout = useCallback(() => {
     const { nodes: newNodes, edges: newEdges } = buildLayout(config);
     setNodes(newNodes);
     setEdges(newEdges);
+    setSelectedNodeId(null);
   }, [config, setNodes, setEdges]);
 
   useEffect(() => {
     regenerateLayout();
   }, [regenerateLayout]);
 
+  const onNodeClick = useCallback((_event: React.MouseEvent, node: DiagramNode) => {
+    setSelectedNodeId(node.id);
+    setEditLabel(node.data.label);
+    setEditSubtitle(node.data.subtitle || "");
+  }, []);
+
+  const saveEdit = useCallback(() => {
+    if (selectedNodeId) {
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === selectedNodeId
+            ? { ...n, data: { ...n.data, label: editLabel, subtitle: editSubtitle } }
+            : n
+        )
+      );
+      onNodeEdit?.(selectedNodeId, editLabel, editSubtitle);
+      setSelectedNodeId(null);
+    }
+  }, [selectedNodeId, editLabel, editSubtitle, setNodes, onNodeEdit]);
+
+  const cancelEdit = useCallback(() => {
+    setSelectedNodeId(null);
+  }, []);
+
   return (
     <div
-      className="h-[350px] sm:h-[500px]"
+      className="h-[350px] sm:h-[500px] relative"
       style={{
         background: "#0a0b0f",
         borderRadius: 12,
-        border: "1px solid #1e2030",
+        border: "1px solid #262940",
         overflow: "hidden",
       }}
     >
@@ -511,6 +546,7 @@ export default function StructureDiagram({ config }: StructureDiagramProps) {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         fitView
         fitViewOptions={{ padding: 0.25 }}
@@ -519,7 +555,7 @@ export default function StructureDiagram({ config }: StructureDiagramProps) {
         proOptions={{ hideAttribution: true }}
         nodesDraggable={true}
         nodesConnectable={false}
-        elementsSelectable={false}
+        elementsSelectable={true}
         panOnScroll
         zoomOnScroll
         defaultEdgeOptions={{
@@ -528,7 +564,7 @@ export default function StructureDiagram({ config }: StructureDiagramProps) {
         }}
       >
         <Background
-          color="#1e2030"
+          color="#262940"
           gap={40}
           size={1}
           style={{ opacity: 0.4 }}
@@ -537,7 +573,7 @@ export default function StructureDiagram({ config }: StructureDiagramProps) {
           showInteractive={false}
           style={{
             background: "#12131a",
-            border: "1px solid #1e2030",
+            border: "1px solid #262940",
             borderRadius: 8,
             boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
           }}
@@ -545,12 +581,61 @@ export default function StructureDiagram({ config }: StructureDiagramProps) {
         />
       </ReactFlow>
 
+      {/* Edit Panel */}
+      {selectedNodeId && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="absolute top-3 right-3 z-10 w-64 bg-card border border-border rounded-xl p-4 shadow-xl shadow-black/40"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Pencil size={12} className="text-accent" />
+            <span className="text-[10px] uppercase tracking-wider text-muted font-semibold">Edit Node</span>
+          </div>
+          <div className="space-y-2.5">
+            <div>
+              <label className="text-[10px] text-muted block mb-1">Label</label>
+              <input
+                value={editLabel}
+                onChange={(e) => setEditLabel(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && saveEdit()}
+                className="w-full bg-background border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted block mb-1">Subtitle</label>
+              <input
+                value={editSubtitle}
+                onChange={(e) => setEditSubtitle(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && saveEdit()}
+                className="w-full bg-background border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
+              />
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={saveEdit}
+                className="flex-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs font-medium hover:bg-accent/90 transition-colors"
+              >
+                Save
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="flex-1 px-3 py-1.5 rounded-lg bg-card border border-border text-xs text-muted hover:text-foreground hover:border-border-hover transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Dark theme overrides for the controls */}
       <style>{`
         .react-flow-controls-dark button {
           background: #12131a !important;
           border: none !important;
-          border-bottom: 1px solid #1e2030 !important;
+          border-bottom: 1px solid #262940 !important;
           color: #6b7094 !important;
           width: 28px !important;
           height: 28px !important;
@@ -574,7 +659,7 @@ export default function StructureDiagram({ config }: StructureDiagramProps) {
         }
         .react-flow__minimap {
           background: #12131a !important;
-          border: 1px solid #1e2030 !important;
+          border: 1px solid #262940 !important;
           border-radius: 8px !important;
         }
       `}</style>

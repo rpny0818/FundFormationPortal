@@ -108,6 +108,7 @@ export interface Resource {
   tags: string[];
   url: string;
   type: "PDF" | "Portal" | "Guide";
+  slides?: string[];
 }
 
 export interface PlaybookPhase {

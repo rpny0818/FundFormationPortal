@@ -448,9 +448,9 @@ function BasicsTab({
         <Slider
           value={config.targetSize}
           onChange={(v) => setConfig({ targetSize: v })}
-          min={100_000_000}
+          min={10_000_000}
           max={5_000_000_000}
-          step={50_000_000}
+          step={10_000_000}
           formatValue={(v) => formatCurrency(v, true)}
         />
       </div>
@@ -1837,7 +1837,7 @@ export default function BuilderPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ---- Header Bar ---- */}
-      <div className="sticky top-14 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
+      <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="mx-auto max-w-[1600px] px-4 lg:px-8 h-12 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-6 h-6 rounded-md bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0">
@@ -1880,11 +1880,11 @@ export default function BuilderPage() {
       </div>
 
       {/* ---- Main Split Pane ---- */}
-      <div className="mx-auto max-w-[1600px] px-4 lg:px-8 py-6">
+      <div className="mx-auto max-w-[1600px] px-4 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* ======== LEFT PANEL: Inputs ======== */}
           <div className="w-full lg:w-[420px] xl:w-[460px] flex-shrink-0">
-            <div className="sticky top-[6.5rem]">
+            <div className="sticky top-[7rem]">
               {/* Tab Bar */}
               <div className="flex items-center gap-0.5 mb-4 overflow-x-auto pb-1 scrollbar-none">
                 {TABS.map((tab) => {
@@ -1923,7 +1923,7 @@ export default function BuilderPage() {
               </div>
 
               {/* Tab Content */}
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-5 min-h-[320px] sm:min-h-[500px] overflow-y-auto max-h-[calc(100vh-10rem)]">
+              <div className="bg-card border border-border rounded-xl p-5 sm:p-6 min-h-[320px] sm:min-h-[500px] overflow-y-auto max-h-[calc(100vh-10rem)]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
@@ -1983,7 +1983,15 @@ export default function BuilderPage() {
                 </span>
               </div>
               <div id="diagram-container">
-                <StructureDiagram config={config} />
+                <StructureDiagram
+                  config={config}
+                  onNodeEdit={(nodeId, label, subtitle) => {
+                    // Map fund node edits back to config where applicable
+                    if (nodeId === "master-fund") {
+                      setConfig({ fundName: label });
+                    }
+                  }}
+                />
               </div>
             </div>
 

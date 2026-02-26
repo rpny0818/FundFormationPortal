@@ -36,13 +36,13 @@ export default function PlaybookPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card/50">
-        <div className="max-w-[1400px] mx-auto px-6 py-8">
+        <div className="max-w-[1400px] mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <h1 className="font-serif text-3xl font-bold mb-2">
+            <h1 className="font-serif text-3xl font-bold mb-3">
               Formation Playbook
             </h1>
             <p className="text-sm text-muted max-w-2xl">

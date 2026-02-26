@@ -94,7 +94,7 @@ export default function CaseStudyPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-gradient-to-r from-card/80 via-card/50 to-card/80">
-        <div className="max-w-[1400px] mx-auto px-6 py-8">
+        <div className="max-w-[1400px] mx-auto px-6 py-12">
           <div className="flex items-start justify-between">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -157,7 +157,7 @@ export default function CaseStudyPage() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-8">
+      <div className="max-w-[1400px] mx-auto px-6 py-10">
         {/* Overview Tab */}
         {activeTab === "overview" && (
           <motion.div

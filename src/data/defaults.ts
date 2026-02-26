@@ -141,6 +141,12 @@ export const resources: Resource[] = [
     tags: ["Governance", "Economics", "LPA"],
     url: "https://ilpa.org/wp-content/uploads/2019/06/ILPA-Principles-3.0_2019.pdf",
     type: "PDF",
+    slides: [
+      "Establishes industry-standard framework for LP-GP alignment in private equity",
+      "Covers governance, transparency, and alignment of interests across the fund lifecycle",
+      "Addresses fee disclosure, reporting standards, and advisory committee best practices",
+      "Widely adopted benchmark used by institutional investors for fund evaluation",
+    ],
   },
   {
     id: "r2",
@@ -149,6 +155,12 @@ export const resources: Resource[] = [
     tags: ["LPA", "Governance", "Economics"],
     url: "https://ilpa.org/industry-guidance/templates-standards-model-documents/model-limited-partnership-agreement/",
     type: "Portal",
+    slides: [
+      "Provides a comprehensive model LPA with standardized terms for private funds",
+      "Covers management fees, carried interest, waterfall, and clawback provisions",
+      "Includes investor-friendly governance provisions and advisory committee framework",
+      "Serves as a negotiation starting point between GPs and institutional LPs",
+    ],
   },
   {
     id: "r3",
@@ -157,6 +169,12 @@ export const resources: Resource[] = [
     tags: ["Capital Calls", "Governance"],
     url: "https://ilpa.org/wp-content/uploads/2018/03/ILPA-Best-Practices-Capital-Calls-Distribution-Notices_Version-1.1.pdf",
     type: "PDF",
+    slides: [
+      "Standardizes capital call and distribution notice formats across the industry",
+      "Specifies minimum notice periods and required content for call notices",
+      "Covers wire instruction security, anti-fraud measures, and verification protocols",
+      "Defines best practices for distribution calculations and investor communication",
+    ],
   },
   {
     id: "r4",
@@ -165,6 +183,13 @@ export const resources: Resource[] = [
     tags: ["PPM", "LPA", "Delaware", "Economics"],
     url: "https://www.duanemorris.com/site/static/introduction_to_fund_formation.pdf",
     type: "PDF",
+    slides: [
+      "Comprehensive primer on the end-to-end private fund formation process",
+      "Covers entity selection, domicile strategy, and regulatory considerations",
+      "Details key documentation: LPA, PPM, subscription agreements, and side letters",
+      "Explains economic terms including management fees, carry, and waterfall structures",
+      "Addresses SEC registration, exemptions, and ongoing compliance requirements",
+    ],
   },
   {
     id: "r5",
@@ -173,6 +198,12 @@ export const resources: Resource[] = [
     tags: ["Cayman", "LPA", "Governance"],
     url: "https://www.mourant.com/media---guides/mourant---cayman-islands-exempted-limited-partnerships.pdf",
     type: "PDF",
+    slides: [
+      "Covers formation and registration of Cayman Exempted Limited Partnerships",
+      "Details governance framework, GP duties, and limited partner protections",
+      "Explains tax-neutral status and regulatory requirements under CIMA oversight",
+      "Addresses operational matters including capital accounts and partner transfers",
+    ],
   },
   {
     id: "r6",
@@ -181,6 +212,12 @@ export const resources: Resource[] = [
     tags: ["Cayman", "LPA", "Governance"],
     url: "https://www.harneys.com/media/jv2lylgd/guide-cayman-islands-exempted-limited-partnerships.pdf",
     type: "PDF",
+    slides: [
+      "Practical guide to establishing Cayman ELPs for international fund structures",
+      "Covers partnership agreement essentials, capital contributions, and profit sharing",
+      "Details CIMA registration process, timelines, and ongoing filing obligations",
+      "Explains best practices for feeder fund structures and blocker entities",
+    ],
   },
   {
     id: "r7",
@@ -189,6 +226,12 @@ export const resources: Resource[] = [
     tags: ["Governance", "Economics", "AML-KYC"],
     url: "https://ilpa.org/industry-guidance/principles-best-practices/ilpa-principles/",
     type: "Portal",
+    slides: [
+      "Central hub for all ILPA industry guidance, principles, and model documents",
+      "Provides templates for DDQs, reporting standards, and diversity metrics",
+      "Covers ESG integration, fee transparency, and LP rights frameworks",
+      "Regularly updated with new guidance reflecting evolving market practices",
+    ],
   },
   {
     id: "r8",
@@ -197,6 +240,12 @@ export const resources: Resource[] = [
     tags: ["Regulatory", "Delaware", "AML-KYC"],
     url: "https://www.sec.gov/investment-adviser-registration",
     type: "Portal",
+    slides: [
+      "SEC guidance on Investment Adviser registration under the Advisers Act",
+      "Covers registration thresholds, exemptions (3(c)(1), 3(c)(7)), and filing requirements",
+      "Details Form ADV filing process and ongoing compliance obligations",
+      "Addresses state vs. federal registration and exempt reporting adviser status",
+    ],
   },
   {
     id: "r9",
@@ -205,6 +254,12 @@ export const resources: Resource[] = [
     tags: ["Delaware", "LPA"],
     url: "https://corp.delaware.gov/",
     type: "Portal",
+    slides: [
+      "Official portal for Delaware entity formation — LPs, LLCs, and corporations",
+      "Delaware is the dominant U.S. domicile for private fund structures",
+      "Offers well-developed body of partnership law and business-friendly court system",
+      "Covers filing requirements, annual reports, and registered agent obligations",
+    ],
   },
   {
     id: "r10",
@@ -213,6 +268,12 @@ export const resources: Resource[] = [
     tags: ["Cayman", "Regulatory", "AML-KYC"],
     url: "https://www.cima.ky/",
     type: "Portal",
+    slides: [
+      "Cayman Islands Monetary Authority — primary regulator for Cayman-domiciled funds",
+      "Handles fund registration, ongoing reporting, and AML/KYC compliance oversight",
+      "Covers Mutual Funds Act and Private Funds Act registration categories",
+      "Provides guidance on annual returns, audited financials, and regulatory filings",
+    ],
   },
 ];
 
