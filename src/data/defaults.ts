@@ -60,16 +60,16 @@ export const defaultFundConfig: FundConfig = {
 };
 
 export const caseStudyConfig: FundConfig = {
-  fundName: "Premier Distressed Real Estate Fund I",
-  strategy: "Distressed Real Estate",
-  targetSize: 2_000_000_000,
-  fundTerm: 7,
+  fundName: "Meridian Credit Opportunities Fund I",
+  strategy: "Credit",
+  targetSize: 1_500_000_000,
+  fundTerm: 6,
   currency: "USD",
   domicile: "Delaware",
 
   lpTypes: ["Institutional", "Sovereign", "Family Office"],
   minCommitment: 10_000_000,
-  targetLPCount: 50,
+  targetLPCount: 45,
   closingMethod: "First Close / Final Close",
   sideLetters: true,
 
@@ -81,13 +81,19 @@ export const caseStudyConfig: FundConfig = {
       investorFocus: "Non-US",
       blockerEntity: false,
     },
+    {
+      id: "feeder-2",
+      jurisdiction: "Delaware",
+      investorFocus: "US Tax-Exempt",
+      blockerEntity: true,
+    },
   ],
   gps: [
     {
       id: "gp-1",
       entityType: "LLC",
       gpCommitPercent: 2,
-      votingNotes: "Alex V — Premier Capital — Sole voting and investment control",
+      votingNotes: "GP — Sole voting and investment control",
     },
   ],
   managementCompany: true,
@@ -103,7 +109,7 @@ export const caseStudyConfig: FundConfig = {
   waterfallType: "Whole Fund",
   feeOffsets: 80,
   keyPersonProvisions: true,
-  keyPersonNotes: "Alex V designated as Key Person. Suspension of investment period upon departure.",
+  keyPersonNotes: "Managing Partners designated as Key Persons. Suspension of investment period upon departure.",
   gpClawback: true,
   gpClawbackNotes: "Standard GP clawback with escrow mechanism (30% of carry distributions)",
 

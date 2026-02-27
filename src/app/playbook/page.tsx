@@ -15,18 +15,18 @@ import {
 
 const phaseColors = [
   "border-blue-500/40 bg-blue-500/5",
+  "border-red-500/40 bg-red-500/5",
   "border-emerald-500/40 bg-emerald-500/5",
-  "border-amber-500/40 bg-amber-500/5",
   "border-purple-500/40 bg-purple-500/5",
-  "border-rose-500/40 bg-rose-500/5",
+  "border-orange-500/40 bg-orange-500/5",
 ];
 
 const phaseDotColors = [
   "bg-blue-500",
+  "bg-red-500",
   "bg-emerald-500",
-  "bg-amber-500",
   "bg-purple-500",
-  "bg-rose-500",
+  "bg-orange-500",
 ];
 
 export default function PlaybookPage() {
@@ -36,16 +36,16 @@ export default function PlaybookPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card/50">
-        <div className="max-w-[1400px] mx-auto px-6 py-12">
+        <div className="max-w-[1400px] mx-auto px-8 py-16">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <h1 className="font-serif text-3xl font-bold mb-3">
+            <h1 className="font-serif text-4xl font-bold mb-4">
               Formation Playbook
             </h1>
-            <p className="text-sm text-muted max-w-2xl">
+            <p className="text-base text-muted max-w-3xl leading-relaxed">
               A phase-by-phase guide through the complete fund formation lifecycle —
               from initial strategy and structuring through capital deployment and
               ongoing operations.
@@ -54,13 +54,13 @@ export default function PlaybookPage() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-10">
+      <div className="max-w-[1400px] mx-auto px-8 py-14">
         {/* Timeline Overview */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-12"
+          className="mb-16"
         >
           <div className="flex items-center gap-2 mb-6">
             <Clock className="w-4 h-4 text-accent" />
@@ -133,7 +133,7 @@ export default function PlaybookPage() {
                   return (
                     <div
                       key={phase.id}
-                      className={`rounded-xl border p-8 mb-8 ${phaseColors[idx]}`}
+                      className={`rounded-xl border p-10 mb-10 ${phaseColors[idx]}`}
                     >
                       <div className="flex items-start justify-between mb-6">
                         <div>
@@ -245,7 +245,7 @@ export default function PlaybookPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 * i }}
                   onClick={() => setActivePhase(phase.id)}
-                  className="text-left p-6 rounded-xl bg-card border border-border hover:border-border-hover hover:bg-card-hover transition-all group"
+                  className="text-left p-8 rounded-xl bg-card border border-border hover:border-border-hover hover:bg-card-hover transition-all group"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div
@@ -274,7 +274,7 @@ export default function PlaybookPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-6 px-6 mt-10">
+      <footer className="border-t border-border py-8 px-8 mt-14">
         <div className="max-w-[1400px] mx-auto text-xs text-muted text-center">
           Informational only. Not legal or investment advice.
         </div>

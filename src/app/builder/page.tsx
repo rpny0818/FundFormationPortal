@@ -42,7 +42,7 @@ import dynamic from "next/dynamic";
 
 const StructureDiagram = dynamic(
   () => import("@/components/diagram/StructureDiagram"),
-  { ssr: false, loading: () => <div className="h-[500px] rounded-xl bg-card border border-border animate-pulse" /> }
+  { ssr: false, loading: () => <div className="h-[580px] rounded-2xl bg-card border border-border animate-pulse" /> }
 );
 
 /* -------------------------------------------------------------------------- */
@@ -417,7 +417,7 @@ function BasicsTab({
         <TextInput
           value={config.fundName}
           onChange={(v) => setConfig({ fundName: v })}
-          placeholder="e.g. Premier Distressed Real Estate Fund I"
+          placeholder="e.g. Meridian Credit Opportunities Fund I"
         />
       </div>
 
@@ -449,7 +449,7 @@ function BasicsTab({
           value={config.targetSize}
           onChange={(v) => setConfig({ targetSize: v })}
           min={10_000_000}
-          max={5_000_000_000}
+          max={3_000_000_000}
           step={10_000_000}
           formatValue={(v) => formatCurrency(v, true)}
         />
@@ -1837,8 +1837,8 @@ export default function BuilderPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ---- Header Bar ---- */}
-      <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="mx-auto max-w-[1600px] px-4 lg:px-8 h-12 flex items-center justify-between">
+      <div className="sticky top-[72px] z-40 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="mx-auto max-w-[1600px] px-6 lg:px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-6 h-6 rounded-md bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0">
               <Layers className="w-3 h-3 text-accent" />
@@ -1880,11 +1880,11 @@ export default function BuilderPage() {
       </div>
 
       {/* ---- Main Split Pane ---- */}
-      <div className="mx-auto max-w-[1600px] px-4 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="mx-auto max-w-[1600px] px-6 lg:px-10 py-10">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* ======== LEFT PANEL: Inputs ======== */}
           <div className="w-full lg:w-[420px] xl:w-[460px] flex-shrink-0">
-            <div className="sticky top-[7rem]">
+            <div className="sticky top-[8.5rem]">
               {/* Tab Bar */}
               <div className="flex items-center gap-0.5 mb-4 overflow-x-auto pb-1 scrollbar-none">
                 {TABS.map((tab) => {
@@ -1923,7 +1923,7 @@ export default function BuilderPage() {
               </div>
 
               {/* Tab Content */}
-              <div className="bg-card border border-border rounded-xl p-5 sm:p-6 min-h-[320px] sm:min-h-[500px] overflow-y-auto max-h-[calc(100vh-10rem)]">
+              <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 min-h-[320px] sm:min-h-[500px] overflow-y-auto max-h-[calc(100vh-10rem)]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
@@ -2024,6 +2024,11 @@ export default function BuilderPage() {
                         : "Standalone",
                     },
                     { label: "Currency", value: config.currency },
+                    {
+                      label: "GP Commitment",
+                      value: `${config.gps[0]?.gpCommitPercent || 0}% (${formatCurrency(config.targetSize * (config.gps[0]?.gpCommitPercent || 0) / 100, true)})`,
+                      highlight: true,
+                    },
                   ]}
                 />
                 <SnapshotCard
@@ -2054,6 +2059,11 @@ export default function BuilderPage() {
                     {
                       label: "Fee Offset",
                       value: `${config.feeOffsets}%`,
+                    },
+                    {
+                      label: "Annual Mgmt Fee",
+                      value: formatCurrency(config.targetSize * config.managementFeePercent / 100, true),
+                      highlight: true,
                     },
                   ]}
                 />

@@ -72,15 +72,15 @@ export default function ResourcesPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card/50">
-        <div className="max-w-[1200px] mx-auto px-6 py-12">
+        <div className="max-w-[1200px] mx-auto px-8 py-16">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="font-serif text-3xl font-bold mb-3">
+            <h1 className="font-serif text-4xl font-bold mb-4">
               Resources Library
             </h1>
-            <p className="text-sm text-muted max-w-2xl">
+            <p className="text-base text-muted max-w-3xl leading-relaxed">
               Curated PDFs, model documents, regulatory portals, and industry
               guidance for fund formation professionals. Click any resource to
               view key highlights.
@@ -89,7 +89,7 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-6 py-10">
+      <div className="max-w-[1200px] mx-auto px-8 py-14">
         {/* Search + Filters */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -308,7 +308,7 @@ export default function ResourcesPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-6 px-6 mt-10">
+      <footer className="border-t border-border py-8 px-8 mt-14">
         <div className="max-w-[1200px] mx-auto text-xs text-muted text-center">
           Informational only. Not legal or investment advice.
         </div>

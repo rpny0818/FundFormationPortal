@@ -94,25 +94,25 @@ export default function CaseStudyPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-gradient-to-r from-card/80 via-card/50 to-card/80">
-        <div className="max-w-[1400px] mx-auto px-6 py-12">
+        <div className="max-w-[1400px] mx-auto px-8 py-16">
           <div className="flex items-start justify-between">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="px-2 py-0.5 rounded bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-semibold uppercase tracking-wider">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-semibold uppercase tracking-wider">
                   Case Study
                 </span>
-                <span className="px-2 py-0.5 rounded bg-accent/10 border border-accent/20 text-accent text-[10px] font-semibold uppercase tracking-wider">
+                <span className="px-2.5 py-1 rounded-lg bg-accent/10 border border-accent/20 text-accent text-[10px] font-semibold uppercase tracking-wider">
                   {config.strategy}
                 </span>
               </div>
-              <h1 className="font-serif text-3xl font-bold mb-2">
+              <h1 className="font-serif text-4xl font-bold mb-3">
                 {config.fundName}
               </h1>
               <p className="text-sm text-muted">
-                GP: Alex V — Premier Capital &bull; Target: {formatCurrency(config.targetSize, true)} &bull; {config.domicile} &bull; {config.fundTerm}-Year Term
+                GP: Meridian Capital Partners &bull; Target: {formatCurrency(config.targetSize, true)} &bull; {config.domicile} &bull; {config.fundTerm}-Year Term
               </p>
             </motion.div>
             <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function CaseStudyPage() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-10">
+      <div className="max-w-[1400px] mx-auto px-8 py-14">
         {/* Overview Tab */}
         {activeTab === "overview" && (
           <motion.div
@@ -527,7 +527,7 @@ export default function CaseStudyPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-6 px-6 mt-10">
+      <footer className="border-t border-border py-8 px-8 mt-14">
         <div className="max-w-[1400px] mx-auto text-xs text-muted text-center">
           Informational only. Not legal or investment advice.
         </div>

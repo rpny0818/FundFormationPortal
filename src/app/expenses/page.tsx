@@ -132,16 +132,16 @@ export default function ExpensesPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="border-b border-border bg-card/50">
-        <div className="max-w-[1400px] mx-auto px-6 py-12">
+        <div className="max-w-[1400px] mx-auto px-8 py-16">
           <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <h1 className="font-serif text-3xl font-bold mb-3">
+              <h1 className="font-serif text-4xl font-bold mb-4">
                 Budget & Expenses
               </h1>
-              <p className="text-sm text-muted max-w-2xl">
+              <p className="text-base text-muted max-w-3xl leading-relaxed">
                 Model formation costs across Lean, Standard, and Institutional
                 scenarios. All figures are estimates for planning purposes.
               </p>
@@ -166,9 +166,9 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-10">
+      <div className="max-w-[1400px] mx-auto px-8 py-14">
         {/* Scenario Toggle + Summary */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 mb-10">
           {/* Scenario Selector */}
           <div className="p-5 rounded-xl bg-card border border-border">
             <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">
@@ -237,7 +237,7 @@ export default function ExpensesPage() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-10">
           {/* Pie Chart */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -490,7 +490,7 @@ export default function ExpensesPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-6 px-6 mt-10">
+      <footer className="border-t border-border py-8 px-8 mt-14">
         <div className="max-w-[1400px] mx-auto text-xs text-muted text-center">
           Informational only. Not legal or investment advice.
         </div>
