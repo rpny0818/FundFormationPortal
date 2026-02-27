@@ -400,6 +400,440 @@ function SnapshotCard({
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Fund Structuring Advisory Panel                                            */
+/* -------------------------------------------------------------------------- */
+
+function AdvisoryPanel({
+  config,
+  setConfig,
+}: {
+  config: ReturnType<typeof useFundStore>["config"];
+  setConfig: ReturnType<typeof useFundStore>["setConfig"];
+}) {
+  const gp = config.gps[0];
+  const gpPct = gp?.gpCommitPercent || 0;
+
+  // Key Calculations
+  const annualFee = config.targetSize * config.managementFeePercent / 100;
+  const gpCommit = config.targetSize * gpPct / 100;
+  const carryAt2x = config.targetSize * config.carryPercent / 100;
+  const feeOffset = annualFee * config.feeOffsets / 100;
+  const netAnnualFee = annualFee - feeOffset;
+  const totalFees = netAnnualFee * config.fundTerm;
+  const lpPrefAnnual = config.targetSize * config.preferredReturn / 100;
+
+  const fmt = (v: number) => {
+    if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
+    if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
+    if (v >= 1e3) return `$${(v / 1e3).toFixed(0)}K`;
+    return `$${v.toFixed(0)}`;
+  };
+
+  // Structuring Score (0-100)
+  let score = 0;
+  if (config.managementFeePercent <= 2) score += 5;
+  if (config.managementFeePercent <= 1.5) score += 3;
+  if (config.carryPercent >= 15 && config.carryPercent <= 25) score += 5;
+  if (config.preferredReturn >= 7) score += 5;
+  if (config.preferredReturn >= 8) score += 3;
+  if (config.catchUp) score += 4;
+  if (config.feeOffsets >= 50) score += 3;
+  if (config.feeOffsets >= 80) score += 2;
+  if (config.waterfallType === "Whole Fund") score += 3;
+  if (config.keyPersonProvisions) score += 7;
+  if (config.gpClawback) score += 7;
+  if (config.sideLetters) score += 3;
+  if (gpPct >= 1) score += 3;
+  if (gpPct >= 2) score += 4;
+  if (config.masterFeeder) score += 6;
+  if (config.feeders.length >= 2) score += 3;
+  if (config.managementCompany) score += 3;
+  if (config.carryVehicle) score += 3;
+  if (config.subscriptionLine) score += 2;
+  if (config.amlDepth === "Institutional") score += 6;
+  else if (config.amlDepth === "Standard") score += 3;
+  if (config.auditRequired) score += 5;
+  if (config.administrator) score += 4;
+  if (config.capitalCallBestPractices) score += 2;
+  if (config.reportingCadence === "Quarterly") score += 3;
+  score = Math.min(score, 100);
+
+  const scoreColor = score >= 80 ? "#34d67a" : score >= 60 ? "#d4ae4f" : "#f05252";
+  const scoreLabel = score >= 80 ? "Strong" : score >= 60 ? "Moderate" : "Needs Work";
+
+  // Waterfall distribution breakdown (simplified for visualization at 2x MOIC)
+  const prefPct = Math.min((config.preferredReturn * config.fundTerm) / 100, 0.5) * 100;
+  const catchUpPct = config.catchUp ? Math.min(config.carryPercent * 0.6, 100 - prefPct) : 0;
+  const remainPct = Math.max(0, 100 - prefPct - catchUpPct);
+  const lpSplitPct = remainPct * (100 - config.carryPercent) / 100;
+  const gpSplitPct = remainPct * config.carryPercent / 100;
+
+  return (
+    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+      {/* ── Header ── */}
+      <div
+        className="px-5 py-4 border-b border-border/60 flex items-center justify-between"
+        style={{ background: "linear-gradient(135deg, #0c1225 0%, #111218 50%, #0f1a14 100%)" }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-accent/12 border border-accent/25 flex items-center justify-center">
+            <Scale className="w-4 h-4 text-accent" />
+          </div>
+          <div>
+            <h2 className="text-[13px] font-semibold text-foreground tracking-wide">
+              Fund Structuring Advisory
+            </h2>
+            <p className="text-[10px] text-muted mt-0.5">
+              Real-time structuring analysis &middot; Key metrics &middot; Waterfall modeling
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="text-right mr-1">
+            <div className="text-[9px] uppercase tracking-wider text-muted font-medium">Score</div>
+            <div className="text-xl font-bold leading-tight" style={{ color: scoreColor }}>
+              {score}
+              <span className="text-[10px] font-normal text-muted">/100</span>
+            </div>
+          </div>
+          <div
+            className="w-11 h-11 rounded-xl border-2 flex items-center justify-center"
+            style={{ borderColor: scoreColor, background: `${scoreColor}12` }}
+          >
+            <span className="text-[8px] font-bold uppercase leading-tight text-center" style={{ color: scoreColor }}>
+              {scoreLabel}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Fee Economics Dashboard ── */}
+      <div className="px-5 py-5 border-b border-border/40">
+        <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mb-4 flex items-center gap-2">
+          <DollarSign className="w-3 h-3" /> Fee Economics & Waterfall
+        </div>
+
+        {/* Inline sliders */}
+        <div className="grid grid-cols-3 gap-5 mb-5">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] text-muted">Management Fee</span>
+              <span className="text-xs font-bold text-foreground">{config.managementFeePercent}%</span>
+            </div>
+            <input
+              type="range" min={0.5} max={3} step={0.1}
+              value={config.managementFeePercent}
+              onChange={(e) => setConfig({ managementFeePercent: Number(e.target.value) })}
+              className="w-full h-1 cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #4b8df8 0%, #4b8df8 ${((config.managementFeePercent - 0.5) / 2.5) * 100}%, #1e2030 ${((config.managementFeePercent - 0.5) / 2.5) * 100}%, #1e2030 100%)`,
+              }}
+            />
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] text-muted">Carried Interest</span>
+              <span className="text-xs font-bold text-foreground">{config.carryPercent}%</span>
+            </div>
+            <input
+              type="range" min={10} max={30} step={1}
+              value={config.carryPercent}
+              onChange={(e) => setConfig({ carryPercent: Number(e.target.value) })}
+              className="w-full h-1 cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #d4ae4f 0%, #d4ae4f ${((config.carryPercent - 10) / 20) * 100}%, #1e2030 ${((config.carryPercent - 10) / 20) * 100}%, #1e2030 100%)`,
+              }}
+            />
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] text-muted">Preferred Return</span>
+              <span className="text-xs font-bold text-foreground">{config.preferredReturn}%</span>
+            </div>
+            <input
+              type="range" min={4} max={12} step={0.5}
+              value={config.preferredReturn}
+              onChange={(e) => setConfig({ preferredReturn: Number(e.target.value) })}
+              className="w-full h-1 cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #34d67a 0%, #34d67a ${((config.preferredReturn - 4) / 8) * 100}%, #1e2030 ${((config.preferredReturn - 4) / 8) * 100}%, #1e2030 100%)`,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Calculated Metrics Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div className="bg-[#08090d] rounded-xl p-3 border border-border/30">
+            <div className="text-[9px] uppercase tracking-wider text-muted mb-1">Annual Mgmt Fee</div>
+            <div className="text-sm font-bold text-accent">{fmt(annualFee)}</div>
+            <div className="text-[9px] text-muted mt-0.5">on {config.managementFeeBasis === "Committed Capital" ? "committed" : "invested"}</div>
+          </div>
+          <div className="bg-[#08090d] rounded-xl p-3 border border-border/30">
+            <div className="text-[9px] uppercase tracking-wider text-muted mb-1">Carry Pool (2× MOIC)</div>
+            <div className="text-sm font-bold text-gold">{fmt(carryAt2x)}</div>
+            <div className="text-[9px] text-muted mt-0.5">{config.carryPercent}% of profit</div>
+          </div>
+          <div className="bg-[#08090d] rounded-xl p-3 border border-border/30">
+            <div className="text-[9px] uppercase tracking-wider text-muted mb-1">GP Commitment</div>
+            <div className="text-sm font-bold text-success">{fmt(gpCommit)}</div>
+            <div className="text-[9px] text-muted mt-0.5">{gpPct}% of fund</div>
+          </div>
+          <div className="bg-[#08090d] rounded-xl p-3 border border-border/30">
+            <div className="text-[9px] uppercase tracking-wider text-muted mb-1">Net Fees ({config.fundTerm}yr)</div>
+            <div className="text-sm font-bold text-foreground">{fmt(totalFees)}</div>
+            <div className="text-[9px] text-muted mt-0.5">{config.feeOffsets}% offset applied</div>
+          </div>
+        </div>
+
+        {/* Waterfall Visualization */}
+        <div>
+          <div className="text-[9px] uppercase tracking-wider text-muted mb-2 flex items-center justify-between">
+            <span>Distribution Waterfall at 2× MOIC</span>
+            <span className="normal-case text-[10px]">
+              LP Pref {fmt(lpPrefAnnual)}/yr &middot; GP Carry {fmt(carryAt2x)}
+            </span>
+          </div>
+          <div className="flex h-8 rounded-lg overflow-hidden gap-px">
+            <motion.div
+              className="flex items-center justify-center"
+              style={{ width: `${Math.max(prefPct, 8)}%`, background: "#34d67a20", borderLeft: "3px solid #34d67a" }}
+              initial={{ width: 0 }} animate={{ width: `${Math.max(prefPct, 8)}%` }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <span className="text-[8px] font-bold text-success truncate px-1">Pref {config.preferredReturn}%</span>
+            </motion.div>
+            {catchUpPct > 0 && (
+              <motion.div
+                className="flex items-center justify-center"
+                style={{ width: `${Math.max(catchUpPct, 6)}%`, background: "#d4ae4f20", borderLeft: "3px solid #d4ae4f" }}
+                initial={{ width: 0 }} animate={{ width: `${Math.max(catchUpPct, 6)}%` }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+              >
+                <span className="text-[8px] font-bold text-gold truncate px-1">Catch-Up</span>
+              </motion.div>
+            )}
+            <motion.div
+              className="flex items-center justify-center"
+              style={{ width: `${Math.max(lpSplitPct, 8)}%`, background: "#4b8df820", borderLeft: "3px solid #4b8df8" }}
+              initial={{ width: 0 }} animate={{ width: `${Math.max(lpSplitPct, 8)}%` }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+            >
+              <span className="text-[8px] font-bold text-accent truncate px-1">LP {100 - config.carryPercent}%</span>
+            </motion.div>
+            <motion.div
+              className="flex items-center justify-center"
+              style={{ width: `${Math.max(gpSplitPct, 6)}%`, background: "#a78bfa20", borderLeft: "3px solid #a78bfa" }}
+              initial={{ width: 0 }} animate={{ width: `${Math.max(gpSplitPct, 6)}%` }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+            >
+              <span className="text-[8px] font-bold text-[#a78bfa] truncate px-1">GP {config.carryPercent}%</span>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Advisory Grid: 3 columns ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/40">
+        {/* Structure & Tax */}
+        <div className="px-5 py-4">
+          <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mb-3 flex items-center gap-2">
+            <Network className="w-3 h-3" /> Structure & Tax
+          </div>
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Architecture</span>
+              <span className="text-[11px] font-semibold text-foreground">
+                {config.masterFeeder ? "Master-Feeder" : "Standalone"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Feeders</span>
+              <span className="text-[11px] font-semibold text-foreground">
+                {config.feeders.length} vehicle{config.feeders.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Domicile</span>
+              <span className="text-[11px] font-semibold text-foreground">{config.domicile}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Blocker Entity</span>
+              <span className={`text-[11px] font-semibold ${config.feeders.some(f => f.blockerEntity) ? "text-gold" : "text-muted"}`}>
+                {config.feeders.some(f => f.blockerEntity) ? "Required (UBTI)" : "None"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Sub Line</span>
+              <span className={`text-[11px] font-semibold ${config.subscriptionLine ? "text-success" : "text-muted"}`}>
+                {config.subscriptionLine ? "Active" : "N/A"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">UBTI / ECI</span>
+              <span className={`text-[11px] font-semibold ${
+                config.feeders.some(f => f.blockerEntity) ? "text-success" :
+                config.feeders.some(f => f.investorFocus === "US Tax-Exempt") ? "text-gold" : "text-muted"
+              }`}>
+                {config.feeders.some(f => f.blockerEntity) ? "Blocked" :
+                 config.feeders.some(f => f.investorFocus === "US Tax-Exempt") ? "Monitor" : "N/A"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Governance & LP Terms */}
+        <div className="px-5 py-4">
+          <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mb-3 flex items-center gap-2">
+            <ShieldCheck className="w-3 h-3" /> Governance & LP Terms
+          </div>
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Key Person</span>
+              <span className={`text-[11px] font-semibold flex items-center gap-1 ${config.keyPersonProvisions ? "text-success" : "text-danger"}`}>
+                {config.keyPersonProvisions ? <><Check className="w-3 h-3" /> Active</> : <><X className="w-3 h-3" /> Missing</>}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">GP Clawback</span>
+              <span className={`text-[11px] font-semibold flex items-center gap-1 ${config.gpClawback ? "text-success" : "text-danger"}`}>
+                {config.gpClawback ? <><Check className="w-3 h-3" /> Active</> : <><X className="w-3 h-3" /> Missing</>}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Side Letters</span>
+              <span className={`text-[11px] font-semibold ${config.sideLetters ? "text-success" : "text-muted"}`}>
+                {config.sideLetters ? "Permitted" : "Restricted"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Waterfall</span>
+              <span className="text-[11px] font-semibold text-foreground">{config.waterfallType}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Catch-Up</span>
+              <span className="text-[11px] font-semibold text-foreground">
+                {config.catchUp ? `${config.catchUpPercent}% to GP` : "None"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Fee Offset</span>
+              <span className="text-[11px] font-semibold text-foreground">{config.feeOffsets}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Capital & Compliance */}
+        <div className="px-5 py-4">
+          <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mb-3 flex items-center gap-2">
+            <Layers className="w-3 h-3" /> Capital & Compliance
+          </div>
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Target LPs</span>
+              <span className="text-[11px] font-semibold text-foreground">{config.targetLPCount} investors</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Min Commit</span>
+              <span className="text-[11px] font-semibold text-foreground">{fmt(config.minCommitment)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">AML / KYC</span>
+              <span className={`text-[11px] font-semibold ${
+                config.amlDepth === "Institutional" ? "text-success" :
+                config.amlDepth === "Standard" ? "text-gold" : "text-danger"
+              }`}>
+                {config.amlDepth}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Audit</span>
+              <span className={`text-[11px] font-semibold ${config.auditRequired ? "text-success" : "text-muted"}`}>
+                {config.auditRequired ? "Required" : "Optional"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Reporting</span>
+              <span className="text-[11px] font-semibold text-foreground">{config.reportingCadence}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted">Administrator</span>
+              <span className={`text-[11px] font-semibold ${config.administrator ? "text-success" : "text-muted"}`}>
+                {config.administrator ? "Engaged" : "Not Yet"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Bottom: Quick Toggles ── */}
+      <div className="px-5 py-3.5 border-t border-border/40 flex flex-wrap items-center gap-x-5 gap-y-2"
+        style={{ background: "#08090d" }}
+      >
+        <button
+          onClick={() => setConfig({ keyPersonProvisions: !config.keyPersonProvisions })}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+            config.keyPersonProvisions
+              ? "bg-success/10 border-success/25 text-success"
+              : "bg-card border-border text-muted hover:border-border-hover"
+          }`}
+        >
+          <ShieldCheck className="w-3 h-3" /> Key Person
+        </button>
+        <button
+          onClick={() => setConfig({ gpClawback: !config.gpClawback })}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+            config.gpClawback
+              ? "bg-success/10 border-success/25 text-success"
+              : "bg-card border-border text-muted hover:border-border-hover"
+          }`}
+        >
+          <Scale className="w-3 h-3" /> GP Clawback
+        </button>
+        <button
+          onClick={() => setConfig({ catchUp: !config.catchUp })}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+            config.catchUp
+              ? "bg-gold/10 border-gold/25 text-gold"
+              : "bg-card border-border text-muted hover:border-border-hover"
+          }`}
+        >
+          <TrendingUp className="w-3 h-3" /> Catch-Up
+        </button>
+        <button
+          onClick={() => setConfig({ sideLetters: !config.sideLetters })}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+            config.sideLetters
+              ? "bg-accent/10 border-accent/25 text-accent"
+              : "bg-card border-border text-muted hover:border-border-hover"
+          }`}
+        >
+          <FileText className="w-3 h-3" /> Side Letters
+        </button>
+        <button
+          onClick={() => setConfig({ subscriptionLine: !config.subscriptionLine })}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+            config.subscriptionLine
+              ? "bg-accent/10 border-accent/25 text-accent"
+              : "bg-card border-border text-muted hover:border-border-hover"
+          }`}
+        >
+          <DollarSign className="w-3 h-3" /> Sub Line
+        </button>
+        <button
+          onClick={() => setConfig({
+            waterfallType: config.waterfallType === "Whole Fund" ? "Deal-by-Deal" : "Whole Fund",
+          })}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium border bg-card border-border text-muted hover:border-border-hover hover:text-foreground transition-all"
+        >
+          <Layers className="w-3 h-3" /> {config.waterfallType}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Tab Content Components                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -1994,6 +2428,9 @@ export default function BuilderPage() {
                 />
               </div>
             </div>
+
+            {/* Fund Structuring Advisory Panel */}
+            <AdvisoryPanel config={config} setConfig={setConfig} />
 
             {/* Executive Summary Cards */}
             <div>
